@@ -19,8 +19,10 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
+      - name: install htmlextra
+        run: npm install -g newman-reporter-htmlextra
       # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: newman run 'Trello.postman_collection.json' --global-var "Key=${{secrets.KEY}}" --global-var "Token=${{secrets.TOKEN}}"
+      - name: Run newman
+        run: newman run 'Trello.postman_collection.json' -r "cli,json,junit,htmlextra" --global-var "Key=${{secrets.KEY}}" --global-var "Token=${{secrets.TOKEN}}"
 
       
