@@ -19,13 +19,22 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
-      
-      # Runs a single command using the runners shell
-      - name: Run newman
-        run: newman run 'Trello.postman_collection.json' -r "cli,json,junit" --global-var "Key=${{secrets.KEY}}" --global-var "Token=${{secrets.TOKEN}}"
+      - name: Install Newman & HTML Reporter
+        run: npm install -g newman newman-reporter-htmlextra
 
-      - uses: actions/upload-artifact@v4
+      # Runs a single command using the runners shell
+      - name: Run Newman with HTML Report
+        run: |
+          newman run Trello.postman_collection.json \
+          -r cli,json,junit,htmlextra \
+          --reporter-htmlextra-export ./newman/report.html \
+          --global-var "Key=${{ secrets.KEY }}" \
+          --global-var "Token=${{ secrets.TOKEN }}"
+
+      - name: Upload Newman Reports
+        uses: actions/upload-artifact@v4
         with:
           name: newman-reports
           path: ./newman
+
       
